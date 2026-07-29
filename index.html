@@ -498,8 +498,14 @@
 
   // ─── Week complete ────────────────────────────────────────────────────────────
   function checkWeekComplete(card, c) {
-    const ws = card.querySelectorAll('.day[data-id]');
-    return ws.length > 0 && Array.from(ws).every(el => c[el.dataset.id]);
+    // Only count workout cells (not plain rest days) toward week completion
+    // Rest days with a note count because they get a data-id via the notes system
+    const ws = Array.from(card.querySelectorAll('.day[data-id]')).filter(el => {
+      // Exclude rest cells that have no note
+      if (el.classList.contains('rest') && !el.classList.contains('has-note')) return false;
+      return true;
+    });
+    return ws.length > 0 && ws.every(el => c[el.dataset.id]);
   }
   function getWeekName(card) {
     const label = card.querySelector('.week-label');
